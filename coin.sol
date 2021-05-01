@@ -50,7 +50,7 @@ contract SecondAid is ERC20Interface, SafeMath {
         name = "BurnAid";
         symbol = "BAID";
         decimals = 18;
-        _totalSupply = 100000000000000000000000;
+        _totalSupply = 100000000000000000000000; //100 billion + extra 12 zeros
 
         balances[msg.sender] = _totalSupply;
         emit Transfer(address(0), msg.sender, _totalSupply);
@@ -91,11 +91,25 @@ contract SecondAid is ERC20Interface, SafeMath {
     }
     
     function burn (address from, uint tokens) internal returns (uint newTokens) {
-        address to = 0x39BE0C09DdB1D08aEd9c10ba112b5df9Eaa08d20; //charity wallet 
-        uint tokensCharity = safeDiv(tokens, 100); 
-        tokens = safeSub(tokens, tokensCharity);
-        balances[to] = safeAdd(balances[to], tokensCharity);
-        emit Transfer(from, to, tokensCharity);
-        return tokens;
+        address to = 0xe0511b3f627d77242bE241830Ab5A72ce8E516bB; //burn wallet 
+        uint burntTok = safeDiv(tokens, 50); //get 2% of tokens
+        newTokens = safeSub(tokens, burntTok);
+        
+        balances[to] = safeAdd(balances[to], burntTok); // we need to get current value of balances[to] and add the new burnTok value to finish this
+        
+        emit Transfer(from, to, newTokens);
+        return newTokens; //return tokens minus burntTok
+    }
+    
+    function SendToCharity (address from, uint tokens) internal returns (uint newTokens) {
+        address to = 0xe0511b3f627d77242bE241830Ab5A72ce8E516bB; //insert new charity wallet address
+
+        uint donatedTok = safeDiv(tokens, 25); //get 4% of tokens
+        newTokens = safeSub(tokens, donatedTok);
+        
+        balances[to] = safeAdd(balances[to], newTokens); // we need to get current value of balances[to] and add the new burnTok value to finish this
+        
+        emit Transfer(from, to, newTokens);
+        return newTokens; //return tokens minus burntTok
     }
 }
