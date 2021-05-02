@@ -1,2 +1,3 @@
 # CryptoCurrency
-Creating my own crypto currency
+
+Creating a crypto currency using Solidity
